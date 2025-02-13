@@ -30,6 +30,7 @@ function Home() {
     },
   ];
 
+  const [searchText, setSearchText] = useState('');
   const [filtered, setFiltered] = useState(dummyData);
   const [viewMode, setViewMode] = useState('grid');
 
@@ -38,6 +39,7 @@ function Home() {
       item.title.includes(e.target.value),
     );
     setFiltered(filteredData);
+    setSearchText(e.target.value);
   };
 
   const handleViewList = () => {
@@ -63,14 +65,14 @@ function Home() {
         </div>
         <div className="flex space-x-2">
           <button
-            className={`p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-blue-500 text-white`}
+            className={`p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${viewMode === 'grid' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
             aria-label="Grid view"
             onClick={handleViewGird}
           >
             <FaTh />
           </button>
           <button
-            className={`p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-200`}
+            className={`p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${!(viewMode === 'grid') ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
             aria-label="List view"
             onClick={handleViewList}
           >
@@ -78,42 +80,38 @@ function Home() {
           </button>
         </div>
       </div>
-      {dummyData.length < 1 ? (
-        <div className="text-center py-10">
-          <p className="text-xl text-gray-600">목록이 없습니다</p>
-        </div>
-      ) : (
-        ''
-      )}
-      {filtered.length < 1 ? (
-        <div className="text-center py-10">
-          <p className="text-xl text-gray-600">검색 결과가 없습니다</p>
-        </div>
-      ) : (
-        ''
-      )}
 
-      <div
-        className={`${viewMode === 'grid' ? 'grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'flex flex-col space-y-6'}`}
-      >
-        {filtered.map(item => (
-          <Link
-            key={item.id}
-            className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105"
-            to={`/canvases/1`}
-          >
-            <div className="p-6">
-              <h2 className="text-2xl font-bold mb-2 text-gray-800">
-                {item.title}
-              </h2>
-              <p className="text-sm text-gray-600 mb-4">{item.lastModified}</p>
-              <span className="inline-block px-3 py-1 text-sm font-semibold text-gray-700 bg-gray-200 rounded-full">
-                {item.category}
-              </span>
-            </div>
-          </Link>
-        ))}
-      </div>
+      {filtered.length === 0 ? (
+        <div className="text-center py-10">
+          <p className="text-xl text-gray-600">
+            {searchText ? '검색 결과가 없습니다' : '목록이 없습니다'}
+          </p>
+        </div>
+      ) : (
+        <div
+          className={`${viewMode === 'grid' ? 'grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'flex flex-col space-y-6'}`}
+        >
+          {filtered.map(item => (
+            <Link
+              key={item.id}
+              className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105"
+              to={`/canvases/${item.id}`}
+            >
+              <div className="p-6">
+                <h2 className="text-2xl font-bold mb-2 text-gray-800">
+                  {item.title}
+                </h2>
+                <p className="text-sm text-gray-600 mb-4">
+                  {item.lastModified}
+                </p>
+                <span className="inline-block px-3 py-1 text-sm font-semibold text-gray-700 bg-gray-200 rounded-full">
+                  {item.category}
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
