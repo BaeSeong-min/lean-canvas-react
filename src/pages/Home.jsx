@@ -1,42 +1,29 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 import CanvasList from '../components/CanvasList';
 import SearchBar from '../components/SearchBar';
 import ViewToggle from '../components/ViewToggle';
+import { getCanvases } from '../api/canvas';
 function Home() {
   const [searchText, setSearchText] = useState('');
   const [isGridView, setIsGridView] = useState(true);
-  const [dummyData, setDummyData] = useState([
-    {
-      id: 1,
-      title: '친환경 도시 농업 플랫폼',
-      lastModified: '2023-06-15',
-      category: '농업',
-    },
-    {
-      id: 2,
-      title: 'AI 기반 건강 관리 앱',
-      lastModified: '2023-06-10',
-      category: '헬스케어',
-    },
-    {
-      id: 3,
-      title: '온디맨드 물류 서비스',
-      lastModified: '2023-06-05',
-      category: '물류',
-    },
-    {
-      id: 4,
-      title: 'VR 가상 여행 서비스',
-      lastModified: '2023-06-01',
-      category: '여행',
-    },
-  ]);
+  const [data, setData] = useState([]);
+
+  async function fetchData() {
+    const response = await getCanvases(); // await은 fulfilled된 Promise 객체의 결과값을 반환한다.
+    setData(response.data);
+  }
+
+  // API로 통신하기 위해서는 useEffect 훅을 사용하자.
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const handleDeleteItem = id => {
-    setDummyData(dummyData.filter(item => item.id !== id));
+    setData(data.filter(item => item.id !== id));
   };
 
-  const filteredData = dummyData.filter(item =>
+  const filteredData = data.filter(item =>
     item.title.toLowerCase().includes(searchText.toLowerCase()),
   );
   return (
